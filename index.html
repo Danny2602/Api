@@ -43,7 +43,7 @@
 
     <script>
         // Obtener los datos de la API y mostrarlos en la tabla
-        fetch('http://localhost:3000/api/peliculas')
+        fetch('http://3.143.233.0:3001/api/peliculas')
             .then(response => response.json())
             .then(peliculas => {
                 const tableBody = document.getElementById('peliculasTable').getElementsByTagName('tbody')[0];
