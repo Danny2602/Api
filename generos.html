@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Películas</title>
+    <title>Lista de Géneros</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js"
         integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
@@ -91,35 +91,27 @@
     <nav id="navbar1" style="border: 0; padding: 0"></nav>
     <div class="container">
 
-        <h1 class="mb-4">Lista de Películas</h1>
+        <h1 class="mb-4">Lista de Géneros</h1>
 
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#addPeliculaModal">
-            Agregar Película
+        <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#addGeneroModal">
+            Agregar Género
         </button>
 
         <!-- Modal -->
-        <div class="modal fade" id="addPeliculaModal" tabindex="-1" aria-labelledby="addPeliculaModalLabel"
+        <div class="modal fade" id="addGeneroModal" tabindex="-1" aria-labelledby="addGeneroModalLabel"
             aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addPeliculaModalLabel">Agregar Nueva Película</h5>
+                        <h5 class="modal-title" id="addGeneroModalLabel">Agregar Nuevo Género</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="peliculaForm">
+                        <form id="generoForm">
                             <div class="mb-3">
-                                <label for="titulo" class="form-label">Título</label>
-                                <input type="text" id="titulo" class="form-control" placeholder="Título" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="duracion" class="form-label">Duración</label>
-                                <input type="number" id="duracion" class="form-control" placeholder="Duración" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="año" class="form-label">Año</label>
-                                <input type="number" id="año" class="form-control" placeholder="Año" required>
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <input type="text" id="nombre" class="form-control" placeholder="Nombre" required>
                             </div>
                             <div class="mb-3">
                                 <label for="descripcion" class="form-label">Descripción</label>
@@ -127,14 +119,11 @@
                                     required>
                             </div>
                             <div class="mb-3">
-                                <label for="actores" class="form-label">Actores</label>
-                                <input type="text" id="actores" class="form-control" placeholder="Actores" required>
+                                <label for="popularidad" class="form-label">Popularidad</label>
+                                <input type="number" id="popularidad" class="form-control" placeholder="Popularidad"
+                                    required>
                             </div>
-                            <div class="mb-3">
-                                <label for="edad" class="form-label">Edad</label>
-                                <input type="number" id="edad" class="form-control" placeholder="Edad" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Agregar Película</button>
+                            <button type="submit" class="btn btn-primary">Agregar Género</button>
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -144,15 +133,12 @@
             </div>
         </div>
 
-        <table id="peliculasTable" class="table table-striped table-bordered">
+        <table id="generosTable" class="table table-striped table-bordered">
             <thead class="table-dark">
                 <tr>
-                    <th>Título</th>
-                    <th>Duración</th>
-                    <th>Año</th>
+                    <th>Nombre</th>
                     <th>Descripción</th>
-                    <th>Actores</th>
-                    <th>Edad</th>
+                    <th>Popularidad</th>
                 </tr>
             </thead>
             <tbody>
@@ -160,54 +146,48 @@
             </tbody>
         </table>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-        </script>
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
     <script src="//cdn.datatables.net/2.1.2/js/dataTables.min.js"></script>
 
-
-
     <script>
-        let table = new DataTable('#peliculasTable', {
+        const apiUrl = 'http://localhost:3000/api/generos';
+
+        // Inicializar DataTables
+        const table = new DataTable('#generosTable', {
             language: {
                 url: '//cdn.datatables.net/plug-ins/2.1.2/i18n/es-CL.json',
             },
         });
 
-        const apiUrl = 'http://localhost:3000/api/peliculas';
-
-        // Función para obtener las películas de la API
-        function fetchPeliculas() {
+        // Función para obtener los géneros de la API
+        function fetchGeneros() {
             fetch(apiUrl)
                 .then(response => response.json())
-                .then(peliculas => {
-                    const tableBody = document.getElementById('peliculasTable').getElementsByTagName('tbody')[0];
+                .then(generos => {
+                    const tableBody = document.getElementById('generosTable').getElementsByTagName('tbody')[0];
                     tableBody.innerHTML = ''; // Limpiar tabla antes de agregar los datos
 
-                    peliculas.forEach(pelicula => {
+                    generos.forEach(genero => {
                         const row = tableBody.insertRow();
-                        row.insertCell(0).textContent = pelicula.titulo;
-                        row.insertCell(1).textContent = pelicula.duracion;
-                        row.insertCell(2).textContent = pelicula.año;
-                        row.insertCell(3).textContent = pelicula.descripcion;
-                        row.insertCell(4).textContent = pelicula.actores;
-                        row.insertCell(5).textContent = pelicula.edad;
+                        row.insertCell(0).textContent = genero.nombre;
+                        row.insertCell(1).textContent = genero.descripcion;
+                        row.insertCell(2).textContent = genero.popularidad;
                     });
                 })
-                .catch(error => console.error('Error obteniendo las películas:', error));
+                .catch(error => console.error('Error obteniendo los géneros:', error));
         }
 
         // Función para manejar el envío del formulario
         function handleFormSubmit(event) {
             event.preventDefault();
 
-            const nuevaPelicula = {
-                titulo: document.getElementById('titulo').value,
-                duracion: parseInt(document.getElementById('duracion').value),
-                año: parseInt(document.getElementById('año').value),
+            const nuevoGenero = {
+                nombre: document.getElementById('nombre').value,
                 descripcion: document.getElementById('descripcion').value,
-                actores: document.getElementById('actores').value,
-                edad: parseInt(document.getElementById('edad').value)
+                popularidad: parseInt(document.getElementById('popularidad').value)
             };
 
             fetch(apiUrl, {
@@ -215,24 +195,24 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(nuevaPelicula)
+                body: JSON.stringify(nuevoGenero)
             })
                 .then(response => response.json())
-                .then(pelicula => {
-                    console.log('Película agregada:', pelicula);
-                    fetchPeliculas(); // Actualizar la lista de películas
-                    document.getElementById('peliculaForm').reset(); // Limpiar el formulario
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('addPeliculaModal'));
+                .then(genero => {
+                    console.log('Género agregado:', genero);
+                    fetchGeneros(); // Actualizar la lista de géneros
+                    document.getElementById('generoForm').reset(); // Limpiar el formulario
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addGeneroModal'));
                     modal.hide(); // Ocultar el modal
                 })
-                .catch(error => console.error('Error agregando la película:', error));
+                .catch(error => console.error('Error agregando el género:', error));
         }
 
         // Configurar el manejador del formulario
-        document.getElementById('peliculaForm').addEventListener('submit', handleFormSubmit);
+        document.getElementById('generoForm').addEventListener('submit', handleFormSubmit);
 
-        // Obtener las películas al cargar la página
-        fetchPeliculas();
+        // Obtener los géneros al cargar la página
+        fetchGeneros();
     </script>
 </body>
 
